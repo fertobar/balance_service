@@ -1,45 +1,72 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>BalanceService</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
+<head>
+  <title>Balance Service</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
 
-    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-    <%= javascript_importmap_tags %>
-  </head>
+  <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+  <%# javascript_importmap_tags %>
+  <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
+  <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+</head>
 
-  <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">Demo</a>
-    <div class="collapse navbar-collapse">
-      <ul class="navbar-nav mr-auto">
-        <li class="nav-item">
-          <%= link_to 'Home', root_path, class: 'nav-link' %>
-        </li>
-        <li class="nav-item">
-          <%= link_to 'Dashboard', dashboard_path, class: 'nav-link' %>
-        </li>
-        <li class="nav-item">
-          <%= link_to 'Products', 'products_path', class: 'nav-link' %>
-        </li>
-        <li class="nav-item">
-          <%= link_to 'Categories', 'categories_path', class: 'nav-link' %>
-        </li>
-      </ul>
+<body class="d-flex flex-column h-100">
+
+<header>
+  <!-- Fixed navbar -->
+  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <div class="container-fluid">
+      <%= link_to 'Balance Service', root_path, class: 'navbar-brand' %>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav me-auto mb-2 mb-md-0">
+          <% if user_signed_in? %>
+            <li class="nav-item">
+              <%= link_to 'Home', root_path, class: 'nav-link active' %>
+            </li>
+            <li class="nav-item">
+              <%= link_to 'Dashboard', dashboard_path, class: 'nav-link' %>
+            </li>
+            <li class="nav-item">
+              <%= link_to 'Categories', 'categories_path', class: 'nav-link' %>
+            </li>
+            <li>
+              <%= link_to 'Logout', destroy_user_session_path, method: :delete, class: 'nav-link' %>
+            </li>
+          <% else %>
+            <li>
+              <%= link_to 'Login', new_user_session_path, class: 'nav-link' %>
+            </li>
+          <% end %>
+        </ul>
+        <% if user_signed_in? %>
+        <form class="d-flex">
+          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+          <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
+        <% end %>
+      </div>
     </div>
-    <% if user_signed_in? %>
-      <div>
-        <%= link_to 'Logout', destroy_user_session_path, method: :delete, class: 'nav-link' %>
-      </div>
-    <% else %>
-      <div>
-        <%= link_to 'Login', new_user_session_path, class: 'nav-link' %>
-      </div>
-    <% end %>
   </nav>
 
-  <%= yield %>
-  </body>
+</header>
+
+
+<!-- Begin page content -->
+<main class="flex-shrink-0">
+  <div class="container">
+    <%= yield %>
+  </div>
+</main>
+
+<footer class="footer mt-auto py-3 bg-light">
+  <div class="container">
+    <span class="text-muted">Footer</span>
+  </div>
+</footer>
+</body>
 </html>
