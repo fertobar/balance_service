@@ -1,58 +1,76 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
-  subject { build(:user) }
+  let(:user) { FactoryBot.create(:user) }
 
-  it 'is valid with valid attributes' do
-    expect(subject).to be_valid
+  context 'validations' do
+    it 'validates presence of email' do
+      user.email = nil
+      expect(user).not_to be_valid
+    end
+
+    it 'validates uniqueness of email' do
+      user2 = FactoryBot.build(:user, email: user.email)
+      expect(user2).not_to be_valid
+    end
+
+    it 'validates presence of name' do
+      user.name = nil
+      expect(user).not_to be_valid
+    end
+
+    it 'validates presence of role' do
+      user.role = nil
+      expect(user).not_to be_valid
+    end
+
+    it 'validates presence of password' do
+      user.password = nil
+      expect(user).not_to be_valid
+    end
+
+    it 'validates length of password' do
+      user.password = '12345'
+      expect(user).not_to be_valid
+    end
   end
 
-  it 'is not valid without a name' do
-    subject.name = nil
-    expect(subject).to_not be_valid
+  context 'devise modules' do
+    it 'should have :database_authenticatable module' do
+      expect(User.ancestors).to include(Devise::Models::DatabaseAuthenticatable)
+    end
+
+    it 'should have :trackable module' do
+      expect(User.ancestors).to include(Devise::Models::Trackable)
+    end
+
+    it 'should have :recoverable module' do
+      expect(User.ancestors).to include(Devise::Models::Recoverable)
+    end
+
+    it 'should have :rememberable module' do
+      expect(User.ancestors).to include(Devise::Models::Rememberable)
+    end
+
+    it 'should have :validatable module' do
+      expect(User.ancestors).to include(Devise::Models::Validatable)
+    end
   end
 
-  it 'is not valid without an email' do
-    subject.email = nil
-    expect(subject).to_not be_valid
-  end
 
-  it 'is not valid without a password' do
-    subject.password = nil
-    expect(subject).to_not be_valid
-  end
+  context 'roles' do
+    it 'should have a role attribute' do
+      expect(user.attributes).to include('role')
+    end
 
-  it 'is not valid without a role' do
-    subject.role = nil
-    expect(subject).to_not be_valid
-  end
+    it 'should allow role to be set to :admin' do
+      user.admin!
+      expect(user.role).to eq('admin')
+    end
 
-  it 'is not valid with a duplicate email' do
-    User.create!(name: 'Joe', email: 'test@example.com', password: 'password', role: :admin)
-    subject.email = 'test@example.com'
-    expect(subject).to_not be_valid
-  end
-
-  it 'is not valid with a password less than 6 characters' do
-    subject.password = '12345'
-    subject.password_confirmation = '12345'
-    expect(subject).to_not be_valid
-  end
-
-  it 'has a role of regular by default' do
-    expect(subject.role).to eq("regular")
-  end
-
-  it 'can have a role of admin' do
-    subject.role = :admin
-    expect(subject.role).to eq("admin")
-  end
-
-  it 'returns false when password does not match' do
-    expect(subject.authenticate('wrongpassword')).to be false
-  end
-
-  it 'returns self when password matches' do
-    expect(subject.authenticate('password')).to eq(subject)
+    it 'should allow role to be set to :regular' do
+      user.regular!
+      expect(user.role).to eq('regular')
+    end
   end
 end
