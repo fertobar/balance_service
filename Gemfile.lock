@@ -264,7 +264,6 @@ PLATFORMS
   x86_64-darwin-18
 
 DEPENDENCIES
-  bcrypt (~> 3.1.7)
   bootsnap
   capybara
   cssbundling-rails
