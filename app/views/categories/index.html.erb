@@ -1,6 +1,6 @@
-<h1>Categories</h1>
+<h1 class="my-4">Categories</h1>
 
-<%= form_with url: categories_path, method: :get, local: true do %>
+<%= form_with url: categories_path, method: :get, local: true, class: "mb-3" do %>
   <div class="container">
     <div class="row">
       <div class="col-md-6">
@@ -13,14 +13,14 @@
   </div>
 <% end %>
 
-<%= link_to 'New Category', new_category_path, class: 'btn btn-primary' %>
+<%= link_to 'New Category', new_category_path, class: 'btn btn-primary mb-3' %>
 
-<table>
-  <thead>
+<table class="table">
+  <thead class="thead-light">
   <tr>
     <th>Code</th>
     <th>Description</th>
-    <th colspan="3"></th>
+    <th colspan="2"></th>
   </tr>
   </thead>
 
@@ -29,9 +29,9 @@
     <tr>
       <td><%= category.code %></td>
       <td><%= category.description %></td>
-      <td><%= link_to 'Show', category %></td>
-      <td><%= link_to 'Edit', edit_category_path(category) %></td>
-      <td><%= link_to 'Destroy', category, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      <td><%= link_to 'Edit', edit_category_path(category), class: 'btn btn-warning' %></td>
+      <td><%= link_to 'Destroy', category, method: :delete, data: { "turbo-method": :delete, confirm: 'Are you sure?' }, class: 'btn btn-danger' %></td>
+
     </tr>
   <% end %>
   </tbody>
