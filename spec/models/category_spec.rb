@@ -10,6 +10,12 @@ RSpec.describe Category, type: :model do
       expect(subject).to be_valid
     end
 
+    it 'is not valid with a duplicate code' do
+      create(:category, code: '123')
+      subject.code = '123'
+      expect(subject).to_not be_valid
+    end
+
     it 'is not valid without a description' do
       subject.description = nil
       expect(subject).to_not be_valid

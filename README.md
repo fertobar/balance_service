@@ -1,24 +1,20 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+### Database creation and migration
+```
+rails db:create
+```
 
-Things you may want to cover:
+### Database initialization
+```
+rails db:migrate
+```
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+### Run the test suite
+```
+rspec
+```
+### Run service in development mode
+```
+./bin/dev
+```
