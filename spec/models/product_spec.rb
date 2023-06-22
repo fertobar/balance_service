@@ -1,7 +1,7 @@
 require 'rails_helper'
 
-RSpec.describe Category, type: :model do
-  subject { build(:category) }
+RSpec.describe Product, type: :model do
+  subject { build(:product) }
 
   describe 'validations' do
     it { should validate_presence_of(:code) }
@@ -12,7 +12,7 @@ RSpec.describe Category, type: :model do
     end
 
     it 'is not valid with a duplicate code' do
-      create(:category, code: '123')
+      create(:product, code: '123')
       subject.code = '123'
       expect(subject).to_not be_valid
     end
@@ -30,3 +30,4 @@ RSpec.describe Category, type: :model do
     it { should have_db_column(:updated_at).of_type(:datetime) }
   end
 end
+
