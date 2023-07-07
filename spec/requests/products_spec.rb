@@ -13,10 +13,11 @@ require 'rails_helper'
 # sticking to rails and rspec-rails APIs to keep things simple and stable.
 
 RSpec.describe "/products", type: :request do
-  
+  let(:user) { create(:user) }
   # This should return the minimal set of attributes required to create a valid
   # Product. As you add validations to Product, be sure to
   # adjust the attributes here as well.
+
   let(:valid_attributes) {
     skip("Add a hash of attributes valid for your model")
   }
@@ -25,111 +26,118 @@ RSpec.describe "/products", type: :request do
     skip("Add a hash of attributes invalid for your model")
   }
 
-  describe "GET /index" do
-    it "renders a successful response" do
-      Product.create! valid_attributes
-      get products_url
-      expect(response).to be_successful
+  context "when user is logged in" do
+    before do
+      sign_in user, scope: :user
     end
-  end
 
-  describe "GET /show" do
-    it "renders a successful response" do
-      product = Product.create! valid_attributes
-      get product_url(product)
-      expect(response).to be_successful
+    describe "GET /index" do
+      it "renders a successful response" do
+        Product.create! valid_attributes
+        get products_url
+        expect(response).to be_successful
+      end
     end
-  end
 
-  describe "GET /new" do
-    it "renders a successful response" do
-      get new_product_url
-      expect(response).to be_successful
+    describe "GET /show" do
+      it "renders a successful response" do
+        product = Product.create! valid_attributes
+        get product_url(product)
+        expect(response).to be_successful
+      end
     end
-  end
 
-  describe "GET /edit" do
-    it "renders a successful response" do
-      product = Product.create! valid_attributes
-      get edit_product_url(product)
-      expect(response).to be_successful
+    describe "GET /new" do
+      it "renders a successful response" do
+        get new_product_url
+        expect(response).to be_successful
+      end
     end
-  end
 
-  describe "POST /create" do
-    context "with valid parameters" do
-      it "creates a new Product" do
-        expect {
+    describe "GET /edit" do
+      it "renders a successful response" do
+        product = Product.create! valid_attributes
+        get edit_product_url(product)
+        expect(response).to be_successful
+      end
+    end
+
+    describe "POST /create" do
+      context "with valid parameters" do
+        it "creates a new Product" do
+          expect {
+            post products_url, params: { product: valid_attributes }
+          }.to change(Product, :count).by(1)
+        end
+
+        it "redirects to the created product" do
           post products_url, params: { product: valid_attributes }
-        }.to change(Product, :count).by(1)
+          expect(response).to redirect_to(product_url(Product.last))
+        end
       end
 
-      it "redirects to the created product" do
-        post products_url, params: { product: valid_attributes }
-        expect(response).to redirect_to(product_url(Product.last))
-      end
-    end
+      context "with invalid parameters" do
+        it "does not create a new Product" do
+          expect {
+            post products_url, params: { product: invalid_attributes }
+          }.to change(Product, :count).by(0)
+        end
 
-    context "with invalid parameters" do
-      it "does not create a new Product" do
-        expect {
+
+        it "renders a response with 422 status (i.e. to display the 'new' template)" do
           post products_url, params: { product: invalid_attributes }
-        }.to change(Product, :count).by(0)
-      end
+          expect(response).to have_http_status(:unprocessable_entity)
+        end
 
-    
-      it "renders a response with 422 status (i.e. to display the 'new' template)" do
-        post products_url, params: { product: invalid_attributes }
-        expect(response).to have_http_status(:unprocessable_entity)
-      end
-    
-    end
-  end
-
-  describe "PATCH /update" do
-    context "with valid parameters" do
-      let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
-      }
-
-      it "updates the requested product" do
-        product = Product.create! valid_attributes
-        patch product_url(product), params: { product: new_attributes }
-        product.reload
-        skip("Add assertions for updated state")
-      end
-
-      it "redirects to the product" do
-        product = Product.create! valid_attributes
-        patch product_url(product), params: { product: new_attributes }
-        product.reload
-        expect(response).to redirect_to(product_url(product))
       end
     end
 
-    context "with invalid parameters" do
-    
-      it "renders a response with 422 status (i.e. to display the 'edit' template)" do
-        product = Product.create! valid_attributes
-        patch product_url(product), params: { product: invalid_attributes }
-        expect(response).to have_http_status(:unprocessable_entity)
-      end
-    
-    end
-  end
+    describe "PATCH /update" do
+      context "with valid parameters" do
+        let(:new_attributes) {
+          skip("Add a hash of attributes valid for your model")
+        }
 
-  describe "DELETE /destroy" do
-    it "destroys the requested product" do
-      product = Product.create! valid_attributes
-      expect {
+        it "updates the requested product" do
+          product = Product.create! valid_attributes
+          patch product_url(product), params: { product: new_attributes }
+          product.reload
+          skip("Add assertions for updated state")
+        end
+
+        it "redirects to the product" do
+          product = Product.create! valid_attributes
+          patch product_url(product), params: { product: new_attributes }
+          product.reload
+          expect(response).to redirect_to(product_url(product))
+        end
+      end
+
+      context "with invalid parameters" do
+
+        it "renders a response with 422 status (i.e. to display the 'edit' template)" do
+          product = Product.create! valid_attributes
+          patch product_url(product), params: { product: invalid_attributes }
+          expect(response).to have_http_status(:unprocessable_entity)
+        end
+
+      end
+    end
+
+    describe "DELETE /destroy" do
+      it "destroys the requested product" do
+        product = Product.create! valid_attributes
+        expect {
+          delete product_url(product)
+        }.to change(Product, :count).by(-1)
+      end
+
+      it "redirects to the products list" do
+        product = Product.create! valid_attributes
         delete product_url(product)
-      }.to change(Product, :count).by(-1)
+        expect(response).to redirect_to(products_url)
+      end
     end
 
-    it "redirects to the products list" do
-      product = Product.create! valid_attributes
-      delete product_url(product)
-      expect(response).to redirect_to(products_url)
-    end
   end
 end
